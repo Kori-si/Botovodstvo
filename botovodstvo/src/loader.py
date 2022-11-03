@@ -16,3 +16,10 @@ except sqlite3.OperationalError as e:
     print(e)
 except Exception as e:
     print(e)
+
+try:
+    db.create_table_products()
+except sqlite3.OperationalError as e:
+    print(e)
+except Exception as e:
+    print(e)
