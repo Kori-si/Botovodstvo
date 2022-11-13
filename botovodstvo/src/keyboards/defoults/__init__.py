@@ -1,2 +1,2 @@
-from .user_keyboards import commands_default_keyboard
+from .commands import commands_keyboard
 

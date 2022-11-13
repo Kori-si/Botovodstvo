@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from keyboards.inlines.callback_data import navigation_products_callback, navigation_basket_callback, \
+from keyboards.inlines.callback_data import navigation_products_callback, basket_callback, \
     product_count_callback
 from loader import db
 
@@ -61,11 +61,18 @@ def get_product_inline_keyboard(id: int = 1, current_count: int = 1) -> InlineKe
                                                     ))
     return product_inline_keyoard
 
-def get_basket_inline_keyboard() -> InlineKeyboardMarkup:
-    basket_inline_keyoard = InlineKeyboardMarkup()
-    btm = InlineKeyboardButton(text='Добавить в корзину',
-                               callback_data=navigation_basket_callback.new(
-                                   for_data='Basket',
-                                   id='id')
-                               )
-    basket_inline_keyoard.add(btm)
+basket_keyboards = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Очистить',
+                                 callback_data=basket_callback.new(
+                                     action='del_basket'
+                                 ))
+        ],
+        [
+            InlineKeyboardButton(text='Оформить заказ',
+                                 callback_data=basket_callback.new(
+                                     action='buy'
+                                 ))
+        ]
+    ])

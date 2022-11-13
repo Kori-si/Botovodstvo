@@ -100,7 +100,7 @@ class Database:
     @staticmethod
     def format_args(sql, parameters: dict) -> tuple:
         sql += " AND ".join([
-            f"{item} = ?" for item in parameters
+            f"{product} = ?" for product in parameters
         ])
         return sql, tuple(parameters.values())
 
@@ -146,6 +146,8 @@ class Database:
         self.execute("DROP TABLE Users", commit=True)
         self.execute("DROP TABLE Products", commit=True)
         self.execute("DROP TABLE Basket", commit=True)
+
+
 
 
 ## Купить

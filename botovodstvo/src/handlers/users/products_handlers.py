@@ -1,14 +1,13 @@
 from aiogram.types import InputFile, InputMediaPhoto
-
-from loader import dp
-from loader import db, bot
 from aiogram import types
+
+from loader import dp, db, bot
 from keyboards import navigation_products_callback, product_count_callback
 from keyboards.inlines import get_product_inline_keyboard
 
 
 @dp.message_handler(text=['Список товаров'])
-@dp.message_handler(commands=['Products'])
+@dp.message_handler(commands=['products'])
 async def answer_menu_command(message: types.Message):
     first_products_info = db.select_product_info(id=1)
     first_products_info = first_products_info[0]
@@ -20,7 +19,7 @@ async def answer_menu_command(message: types.Message):
                                caption=products_text,
                                reply_markup=get_product_inline_keyboard())
 
-@dp.callback_query_handler(navigation_products_callback.filter(for_data='Products'))
+@dp.callback_query_handler(navigation_products_callback.filter(for_data='products'))
 async def see_new_product(call: types.CallbackQuery):
     print(call.data)
     current_product_id = int(call.data.split(':')[-1])
@@ -80,9 +79,13 @@ async def minus_product(call: types.CallbackQuery):
 @dp.callback_query_handler(product_count_callback.filter(target='basket'))
 async def add_product_basket(call: types.CallbackQuery):
     current_count = int(call.data.split(':')[-1])
-    current_product_id = int(call.data.split(':')[-2])
+    current_product_id = (call.data.split(':')[-2])
     user_id, user_basket = db.select_user_basket(id=call.from_user.id)
+    # "1:23 4:80 313:2"
+    # .split() -> ["1:23", "4:80", "313:2"]
+    # .split(":") -> [["1", "23"], ["4", "80"], ["313", "2"], ["432", "123"]]
     user_basket = [product_data.split(':') for product_data in user_basket.split()]
+    # Проверяем, есть ли уже этот товар в корзине или нет
     for i in range(len(user_basket)):
         product_id, product_count = user_basket[i]
         if current_product_id == product_id:
@@ -93,5 +96,5 @@ async def add_product_basket(call: types.CallbackQuery):
     user_basket = ' '.join([':'.join(dbl) for dbl in user_basket])
     db.update_basket(id=user_id, user_basket=user_basket)
     await bot.answer_callback_query(callback_query_id=call.id,
-                                     text='Товар успешно добавлен',
+                                    text='Товар успешно добавлен',
                                     show_alert=False)
